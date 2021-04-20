@@ -7,6 +7,9 @@ load('data\PatientInfoNumeric.mat');
 idx_nan_confirmation = find(isnan(PatientInfo(:,11)));
 PatientInfo(idx_nan_confirmation,:) = [];
 
+% Correct faulty data:
+PatientInfo([819 5107 5108], 9) = NaN;
+
 % Fill missing data:
 PatientInfo = PatientInfo';
 
