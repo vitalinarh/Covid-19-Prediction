@@ -1,68 +1,39 @@
 clear all;
 close all;
 
-%% Read Data
-
-% Patient Features:
-% [1] Patient [2] Sex [3] Age [4] Country [5] Province [6] City
-% [7] Infection Case [8] Infected By [9] Contact Number
-% [10] Symptom Onset Date [11] Confirmed Date [12] Released Date
-% [13] Deceased Date [14] State
+%% Read Data Structure
 
 % Load mat file:
-load('data\PatientInfoFilled.mat');
+load('data\DataStructReduced.mat');
 
-%% Data Structure
+%% Create Training and Testing Data Sets
 
-% Exclude patient number (unique for all elements):
-data.X = PatientInfo(:,2:end-1)';
-data.y = PatientInfo(:,end)';
-data.dim = size(data.X,1);
-data.num_data = size(data.X,2);
-data.name = 'Covid-19 Data';
+trn_ratio = 0.5;
 
-X_names = {'Sex', 'Age', 'Country', 'Province', 'City', 'Infection Case',...
-           'Infected By', 'Contact Number', 'Symptom Onset Date',...
-           'Confirmation Date', 'Released Date', 'Deceased Date'};
+released = find(data_lda.y == 1);
+not_released = find(data_lda.y == 2);
 
-%% Scale Data
+% Training and testing data (released):
+[trn_released, ~, tst_released] = dividerand(numel(released), trn_ratio, 0, 1 - trn_ratio);
 
-% Run scalestd (normalize data):
-data_scaled = scalestd(data);
+% Training and testing data (not released):
+[trn_not_released, ~, tst_not_released] = dividerand(numel(not_released), trn_ratio, 0, 1 - trn_ratio);
 
-%% Kruskal-Wallis
+trn_idx = [released(trn_released), not_released(trn_not_released)];
+tst_idx = [released(tst_released), not_released(tst_not_released)];
 
-rank = cell(data.dim, 2);
+trn.X = data_lda.X(:,trn_idx);
+trn.y = data_lda.y(trn_idx);
+trn.dim = size(data_lda.X,1);
+trn.num_data = size(data_lda.X,2);
+trn.name = 'Covid-19 Data (TRAINING)';
 
-for i=1:data.dim
-    [p, anovatab, stats] = kruskalwallis(data.X(i, :), data.y, 'off');
-    rank{i, 1} = X_names(i);
-    rank{i, 2} = anovatab{2, 5};
-end
+tst.X = data_lda.X(:,tst_idx);
+tst.y = data_lda.y(tst_idx);
+tst.dim = size(data_lda.X,1);
+tst.num_data = size(data_lda.X,2);
+tst.name = 'Covid-19 Data (TESTING)';
 
-%% Correlation Test
+%% FLD (Fischer Linear Discriminant)
 
-% Calculate correlation matrix of features:
-correlation_matrix = corrcoef(data.X');
-
-% Display heatmap for the correlation matrix:
-% heatmap(correlation_matrix);
-
-%% PCA
-
-% Calculate eigen values for current features and choose new
-% dimensionality:
-eigenval = sort(eig(correlation_matrix), 'descend');
-% scatter(1:data.dim, eigenval);
-
-n_dim = 5;
-
-model = pca(data_scaled.X, n_dim);
-data_proj = linproj(data_scaled.X,model);
-
-%% LDA
-
-n_dim = data.dim - 1;
-
-model = lda(data_scaled, n_dim);
-data_proj = linproj(data_scaled.X,model);
+fld_model = fld(trn);
