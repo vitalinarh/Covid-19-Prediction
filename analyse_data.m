@@ -41,6 +41,7 @@ correlation_matrix = corrcoef(data.X');
 
 %% New Data Strucutre
 
+% Selection of features based on previous steps:
 feat_selected = [4 10 11];
 
 data_new.X = data_scaled.X(feat_selected,:);
@@ -61,7 +62,7 @@ correlation_matrix_new = corrcoef(data_new.X');
 [eigenval, eigenmat] = eig(correlation_matrix_new);
 % scatter(1:data.dim, eigenval);
 
-n_dim = 3;
+n_dim = 2;
 
 model = pca(data_scaled.X, n_dim);
 data_proj_pca = linproj(data_scaled.X,model);
