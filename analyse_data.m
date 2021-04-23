@@ -63,7 +63,7 @@ eigenval = eig(correlation_matrix_new);
 % scatter(1:data.dim, eigenval);
 
 % Kaiser method:
-n_dim = 2;
+n_dim = 3;
 
 model = pca(data_scaled.X, n_dim);
 data_proj_pca = linproj(data_scaled.X,model);

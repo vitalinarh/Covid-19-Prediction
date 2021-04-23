@@ -20,7 +20,7 @@ else
     return;
 end
 
-n_runs = 100;
+n_runs = 250;
 trn_ratio = 0.5;
 
 released = find(data.y == 1);
@@ -56,7 +56,7 @@ for r = 1:1:n_runs
     fld_model = fld(trn);
     y_pred = linclass(tst.X, fld_model);
     error_fld = [error_fld cerror(y_pred, tst.y)];
-    % figure; ppatterns(trn); pline(fld_model);
+    % figure; axis equal; ppatterns(trn); pline(fld_model);
 
     %% Euclidean Linear Discriminants
 
