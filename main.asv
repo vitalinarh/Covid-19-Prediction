@@ -110,13 +110,13 @@ for r = 1:1:n_runs
     %% Perform the calculations
     % RELEASED
     % Sensitivity, TP / (TP + FN)
-    fld1_sensitivity = [fld1_sensitivity width(intersect(idx_c1, idx_c1_pred) / (width(intersect(idx_c1, idx_c1_pred) + width(intersect(idx_c2, idx_c1_pred)))];
+    fld1_sensitivity = [fld1_sensitivity (fld_TP_released(i) / (fld_TP_released(i) + fld_FN_released(i)))];
     % Specificity, TN / (FP + TN)
-    fld1_specificity = [fld1_specificity width(intersect(idx_c2, idx_c2_pred)) / (width(intersect(idx_c1, idx_c2_pred)) + width(intersect(idx_c2, idx_c2_pred)))];
+    fld1_specificity = [fld1_specificity (fld_TN_released(i) / (fld_FP_released(i) + fld_TN_released(i)))];
  
     % NOT RELEASED
     % Sensitivity, TP / (TP + FN)
-    fld2_sensitivity = [fld2_sensitivity (width(intersect(idx_c2, idx_c2_pred)) / (width(intersect(idx_c2, idx_c2_pred)) + width(intersect(idx_c2, idx_c1_pred))))];
+    fld2_sensitivity = [fld2_sensitivity (fld_TP_not_released(i) / (width(intersect(idx_c2, idx_c2_pred)) + width(intersect(idx_c2, idx_c1_pred))))];
     % Specificity, TN / (FP + TN)
     fld2_specificity = [fld2_specificity (width(intersect(idx_c1, idx_c1_pred)) / (width(intersect(idx_c1, idx_c2_pred)) + width(intersect(idx_c1, idx_c1_pred))))];
 
@@ -161,15 +161,15 @@ for r = 1:1:n_runs
     %% Perform the calculations
     % RELEASED
     % Sensitivity, TP / (TP + FN)
-    mdc1_sensitivity = [mdc1_sensitivity (width(intersect(idx_c1, idx_c1_pred)) / (width(intersect(idx_c1, idx_c1_pred)) + width(intersect(idx_c2, idx_c1_pred))))];
+    mdc1_sensitivity = [mdc1_sensitivity (mdc_TP_released(i) / mdc_TP_released(i) + mdc_FN_released(i))];
     % Specificity, TN / (FP + TN)
-    mdc1_specificity = [mdc1_specificity (width(intersect(idx_c2, idx_c2_pred)) / (mdc_FP_released + mdc_TN_released))];
+    mdc1_specificity = [mdc1_specificity (mdc_TN_released(i) / (mdc_FP_released(i) + mdc_TN_released(i)))];
 
     % RELEASED
     % Sensitivity, TP / (TP + FN)
-    mdc2_sensitivity = [mdc2_sensitivity (mdc_TP_not_released / (mdc_TP_not_released + mdc_FN_not_released))];
+    mdc2_sensitivity = [mdc2_sensitivity (mdc_TP_not_released(i) / (mdc_TP_not_released(i) + mdc_FN_not_released(i)))];
     % Specificity, TN / (FP + TN)
-    mdc2_specificity = [mdc2_specificity (mdc_TN_not_released / (mdc_FP_not_released + mdc_TN_not_released))];
+    mdc2_specificity = [mdc2_specificity (mdc_TN_not_released(i) / (mdc_FP_not_released(i) +  mdc_TN_not_released(i)))];
 
 end
 
@@ -183,11 +183,11 @@ mdc_TN_not_released = mean(mdc_TN_not_released);
 mdc_FP_not_released = mean(mdc_FP_not_released);
 mdc_FN_not_released = mean(mdc_FN_not_released);
 
-mdc1_sensitivity = mean(mdc1_sensitivity)
-mdc1_specificity = mean(mdc1_specificity)
+mdc1_sensitivity = mean(mdc1_sensitivity);
+mdc1_specificity = mean(mdc1_specificity);
 
-mdc2_sensitivity = mean(mdc2_sensitivity)
-mdc2_specificity = mean(mdc2_specificity)
+mdc2_sensitivity = mean(mdc2_sensitivity);
+mdc2_specificity = mean(mdc2_specificity);
 
 fld_TP_released = mean(fld_TP_released);
 fld_TN_released = mean(fld_TN_released);
