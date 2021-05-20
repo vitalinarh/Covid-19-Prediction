@@ -1,3 +1,5 @@
+clear all;
+
 %% Import data from text file
 % Script for importing data from the following text file:
 %
@@ -31,6 +33,7 @@ opts = setvaropts(opts, "age", "ThousandsSeparator", ",");
 
 % Import the data
 PatientInfo = readtable("raw_data\PatientInfo.csv", opts);
+save('data\PatientInfo.mat', 'PatientInfo');
 
 %% Set up the Import Options and import the data for Weather Info
 opts = delimitedTextImportOptions("NumVariables", 10);
@@ -68,7 +71,7 @@ opts.Delimiter = ",";
 
 % Specify column names and types
 opts.VariableNames = ["code", "province", "city", "latitude", "longitude", "elementary_school_count", "kindergarten_count", "university_count", "academy_ratio", "elderly_population_ratio", "elderly_alone_ratio", "nursing_home_count"];
-opts.VariableTypes = ["double", "categorical", "string", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
+opts.VariableTypes = ["double", "string", "string", "double", "double", "double", "double", "double", "double", "double", "double", "double"];
 
 % Specify file level properties
 opts.ExtraColumnsRule = "ignore";
