@@ -21,9 +21,21 @@ X_names = {'Sex', 'Age', 'Country', 'Province', 'City', 'Infection Case',...
 % Run scalestd (normalize data):
 data_scaled = scalestd(data);
 
+%% Correlation Test
+
+% Calculate correlation matrix of features:
+correlation_matrix = corrcoef(data.X');
+
+% Display heatmap for the correlation matrix:
+%heatmap(correlation_matrix);
+
+% Redundant Features
+redundant_feat = [9];
+
 %% Kruskal-Wallis
 
 rank = cell(data.dim, 2);
+threshold = 100;
 
 for i=1:data.dim
     [p, anovatab, stats] = kruskalwallis(data.X(i, :), data.y, 'off');
@@ -31,18 +43,12 @@ for i=1:data.dim
     rank{i, 2} = anovatab{2, 5};
 end
 
-%% Correlation Test
-
-% Calculate correlation matrix of features:
-correlation_matrix = corrcoef(data.X');
-
-% Display heatmap for the correlation matrix:
-% heatmap(correlation_matrix);
+idx = find(cell2mat(rank(:, 2)) > threshold);
 
 %% New Data Strucutre
 
 % Selection of features based on previous steps:
-feat_selected = [4 7 10 11];
+feat_selected = setdiff(idx, redundant_feat);
 
 data_new.X = data_scaled.X(feat_selected,:);
 data_new.y = data_scaled.y;
@@ -63,17 +69,17 @@ eigenval = eig(correlation_matrix_new);
 % scatter(1:data.dim, eigenval);
 
 % Kaiser method:
-n_dim = 3;
+n_dim = numel(find(eigenval < 1));
 
 model = pca(data_scaled.X, n_dim);
-data_proj_pca = linproj(data_scaled.X,model);
+data_proj_pca = linproj(data_scaled.X, model);
 
 %% LDA
 
 n_dim = data_new.dim - 1;
 
 model = lda(data_new, n_dim);
-data_proj_lda = linproj(data_new.X,model);
+data_proj_lda = linproj(data_new.X, model);
 
 %% Data Reduced
 
@@ -88,3 +94,5 @@ data_lda.y = data_new.y;
 data_lda.dim = size(data_lda.X,1);
 data_lda.num_data = size(data_lda.X,2);
 data_lda.name = 'Covid-19 Data (Reduced with LDA)';
+
+save('data\DataStructReduced.mat', 'data_pca', 'data_lda');
