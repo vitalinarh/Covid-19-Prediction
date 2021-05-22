@@ -1,3 +1,5 @@
+function [] = import_data()
+
 clear all;
 
 %% Import data from text file

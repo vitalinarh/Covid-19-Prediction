@@ -1,7 +1,29 @@
+function [] = analyse_data(flag)
+
 %% Read Data
 
 % Load mat file:
-load('data\PatientInfoFilled.mat');
+
+if (strcmp(flag, "A") == 1)
+    load('data\PatientInfoFilled.mat');
+    
+    X_names = {'Sex', 'Age', 'Country', 'Province', 'City', 'Infection Case',...
+           'Infected By', 'Contact Number', 'Symptom Onset Date',...
+           'Confirmation Date', 'Released Date', 'Deceased Date'};
+
+elseif (strcmp(flag, "B") == 1 || strcmp(flag, "C") == 1)
+    load('data\PatientInfoAdditional.mat');
+    
+    X_names = {'Sex', 'Age', 'Country', 'Province', 'City', 'Infection Case',...
+           'Infected By', 'Contact Number', 'Symptom Onset Date',...
+           'Confirmation Date', 'Released Date', 'Deceased Date',...
+           'Average Temp.', 'Min. Temp.', 'Max. Temp.', 'Precipitation',...
+           'Max. Wind Speed', 'Most Wind Direction', 'Average Humidity',...
+           'Elementary Count', 'Kindergarten Count', 'University Count',...
+           'Academy Ratio', 'Elderly Population', 'Elderly Alone Ration',...
+           'Nursing Home Count'};
+
+end
 
 %% Data Structure
 
@@ -11,10 +33,6 @@ data.y = PatientInfo(:,end)';
 data.dim = size(data.X,1);
 data.num_data = size(data.X,2);
 data.name = 'Covid-19 Data';
-
-X_names = {'Sex', 'Age', 'Country', 'Province', 'City', 'Infection Case',...
-           'Infected By', 'Contact Number', 'Symptom Onset Date',...
-           'Confirmation Date', 'Released Date', 'Deceased Date'};
 
 %% Scale Data
 

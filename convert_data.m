@@ -1,3 +1,5 @@
+function [] = convert_data()
+
 clear all;
 
 %% Fetch imported data and convert types

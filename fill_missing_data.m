@@ -1,3 +1,5 @@
+function [] = fill_missing_data()
+
 clear all;
 
 %% Fetch converted data and fill missing values
@@ -92,13 +94,13 @@ idx_released = find(~isnan(PatientInfo(12, :)));
 mean_diff = round(mean(PatientInfo(12,idx_released) - PatientInfo(11,idx_released)));
 
 idx_nan_released = find(isnan(PatientInfo(12, :)));
-idx_state = find(PatientInfo(14, :) == 3);
+idx_state = find(PatientInfo(end, :) == 3);
 
 for r = intersect(idx_nan_released,idx_state)
     PatientInfo(12,r) = PatientInfo(11,r) + mean_diff;
 end
 
-idx_not_state = find(PatientInfo(14, :) ~= 3);
+idx_not_state = find(PatientInfo(end, :) ~= 3);
 PatientInfo(12,idx_not_state) = 0;
 
 % Deceased date (fill according to the confirmation date, 0 if not deceased):
@@ -106,13 +108,13 @@ idx_deceased = find(~isnan(PatientInfo(13, :)));
 mean_diff = round(mean(PatientInfo(13,idx_deceased) - PatientInfo(11,idx_deceased)));
 
 idx_nan_deceased = find(isnan(PatientInfo(13, :)));
-idx_state = find(PatientInfo(14, :) == 1);
+idx_state = find(PatientInfo(end, :) == 1);
 
 for d = intersect(idx_nan_deceased,idx_state)
     PatientInfo(13,d) = PatientInfo(11,d) + mean_diff;
 end
 
-idx_not_state = find(PatientInfo(14, :) ~= 1);
+idx_not_state = find(PatientInfo(end, :) ~= 1);
 PatientInfo(13,idx_not_state) = 0;
 
 % Transform the 3 states into 2 classes:
@@ -121,3 +123,18 @@ PatientInfo = PatientInfo';
 ind = find(PatientInfo(:,end) == 3);
 PatientInfo(ind,end) = 1;
 PatientInfo(setdiff(1:end,ind),end) = 2;
+
+%% Weather / Region:
+
+load('data\WeatherNumeric.mat');
+load('data\RegionNumeric.mat');
+
+[r, c] = ind2sub(size(Weather), find(isnan(Weather)));
+Weather(r, c) = 0;
+
+[r, c] = ind2sub(size(Region), find(isnan(Region)));
+Region(r, c) = 0;
+
+save('data\PatientInfoFilled.mat', 'PatientInfo');
+save('data\WeatherFilled.mat', 'Weather');
+save('data\RegionFilled.mat', 'Region');
