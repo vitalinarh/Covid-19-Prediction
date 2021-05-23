@@ -1,7 +1,7 @@
-function [] = analyse_data(scenario, pca_rule, corr_threshold, kw_threshold)
+function [] = analyse_data(scenario, pca_rule) % Maybe add threshold values
 %% Read Data
-
 % Load mat file:
+
 if (strcmp(scenario, "A") == 1)
     load('data\PatientInfoFilled.mat');
     
@@ -38,8 +38,7 @@ data.name = 'Covid-19 Data';
 data_scaled = scalestd(data);
 
 %% Correlation Test
-
-% corr_threshold = 0.95;
+corr_threshold = 0.95;
 
 % Calculate correlation matrix of features:
 correlation_matrix = corrcoef(data.X');
@@ -60,7 +59,7 @@ end
 %% Kruskal-Wallis
 
 rank = cell(data.dim, 2);
-% kw_threshold = 100;
+kw_threshold = 100;
 
 for i=1:data.dim
     [p, anovatab, stats] = kruskalwallis(data.X(i, :), data.y, 'off');
@@ -125,11 +124,12 @@ data_lda.dim = size(data_lda.X,1);
 data_lda.num_data = size(data_lda.X,2);
 data_lda.name = 'Covid-19 Data (Reduced with LDA)';
 
+save('data\DataStructReduced.mat', 'data_pca', 'data_lda');
+
 if (strcmp(scenario, "A") == 1)
     save('data\DataReduced_A.mat', 'data_pca', 'data_lda');
 elseif (strcmp(scenario, "B") == 1)
     save('data\DataReduced_B.mat', 'data_pca', 'data_lda');
 elseif (strcmp(scenario, "C") == 1)
-    save('data\DataReduced_C.mat', 'data_pca', 'data_lda');
+    save('data\DataReduced_A.mat', 'data_pca', 'data_lda');
 end
-
