@@ -77,11 +77,11 @@ PatientInfo(8,:) = fillmissing(PatientInfo(8,:),'constant',0);
 idx_contacts = find(~isnan(PatientInfo(9, :)));
 mean_contacts = round(mean(PatientInfo(9,idx_contacts)));
 
-PatientInfo(9,:) = fillmissing(PatientInfo(9,:),'constant',mean_contacts);
+PatientInfo(9,:) = fillmissing(PatientInfo(9,:),'constant', mean_contacts);
 
 % Symptom onset date (fill according to the confirmation date):
 idx_symptom = find(~isnan(PatientInfo(10, :)));
-mean_diff = round(mean(PatientInfo(10,idx_symptom) - PatientInfo(11,idx_symptom)));
+mean_diff = round(mean(PatientInfo(10,idx_symptom) - PatientInfo(11, idx_symptom)));
 
 idx_nan_symptom = find(isnan(PatientInfo(10, :)));
 
@@ -101,11 +101,11 @@ for r = intersect(idx_nan_released,idx_state)
 end
 
 idx_not_state = find(PatientInfo(end, :) ~= 3);
-PatientInfo(12,idx_not_state) = 0;
+PatientInfo(12, idx_not_state) = 0;
 
 % Deceased date (fill according to the confirmation date, 0 if not deceased):
 idx_deceased = find(~isnan(PatientInfo(13, :)));
-mean_diff = round(mean(PatientInfo(13,idx_deceased) - PatientInfo(11,idx_deceased)));
+mean_diff = round(mean(PatientInfo(13, idx_deceased) - PatientInfo(11,idx_deceased)));
 
 idx_nan_deceased = find(isnan(PatientInfo(13, :)));
 idx_state = find(PatientInfo(end, :) == 1);
@@ -115,14 +115,10 @@ for d = intersect(idx_nan_deceased,idx_state)
 end
 
 idx_not_state = find(PatientInfo(end, :) ~= 1);
-PatientInfo(13,idx_not_state) = 0;
+PatientInfo(13, idx_not_state) = 0;
 
-% Transform the 3 states into 2 classes:
+% Transpose
 PatientInfo = PatientInfo';
-
-ind = find(PatientInfo(:,end) == 3);
-PatientInfo(ind,end) = 1;
-PatientInfo(setdiff(1:end,ind),end) = 2;
 
 %% Weather / Region:
 

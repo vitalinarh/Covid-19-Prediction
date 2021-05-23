@@ -1,6 +1,7 @@
-function stats = stats_calc(flag, stats, idx_c1, idx_c2, idx_c1_pred, idx_c2_pred, r)
+function stats = stats_calc(flag, stats, r, idx_c1, idx_c2, idx_c1_pred, idx_c2_pred)
 
     if (strcmp(flag, 'init') == 1)
+        
         clear stats
         stats.error_fld = [];
         stats.error_mdc = [];
@@ -50,6 +51,7 @@ function stats = stats_calc(flag, stats, idx_c1, idx_c2, idx_c1_pred, idx_c2_pre
         stats.fld_FN_not_released = [stats.fld_FN_not_released  width(intersect(idx_c2, idx_c1_pred))];
         
     elseif strcmp(flag, 'add_mdc') == 1
+        
         stats.mdc_TP_released = [stats.mdc_TP_released width(intersect(idx_c1, idx_c1_pred))];
         stats.mdc_TN_released = [stats.mdc_TN_released width(intersect(idx_c2, idx_c2_pred))];
         stats.mdc_FP_released = [stats.mdc_FP_released width(intersect(idx_c1, idx_c2_pred))];
@@ -89,6 +91,7 @@ function stats = stats_calc(flag, stats, idx_c1, idx_c2, idx_c1_pred, idx_c2_pre
         stats.mdc2_specificity = [stats.mdc2_specificity (stats.mdc_TN_not_released(r) / (stats.mdc_FP_not_released(r) +  stats.mdc_TN_not_released(r)))];
     
     elseif strcmp(flag, 'final_calc') == 1
+        
         stats.mdc_TP_released = mean(stats.mdc_TP_released);
         stats.mdc_TN_released = mean(stats.mdc_TN_released);
         stats.mdc_FP_released = mean(stats.mdc_FP_released);
