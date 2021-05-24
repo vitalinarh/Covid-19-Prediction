@@ -1,130 +1,134 @@
-function stats = stats_calc(flag, stats, r, idx_c1, idx_c2, idx_c1_pred, idx_c2_pred)
+function stats = stats_calc(flag, is_multi, stats, r, idx_class)
 
     if (strcmp(flag, 'init') == 1)
         
-        clear stats
-        stats.error_fld = [];
-        stats.error_mdc = [];
+        stats.error = [];
 
-        stats.fld1_sensitivity = [];
-        stats.fld1_specificity = [];
+        stats.c1_sensitivity = [];
+        stats.c1_specificity = [];
 
-        stats.fld2_sensitivity = [];
-        stats.fld2_specificity = [];
-
-        stats.mdc1_sensitivity = [];
-        stats.mdc1_specificity = [];
-
-        stats.mdc2_sensitivity = [];
-        stats.mdc2_specificity = [];
-
-        stats.mdc_TP_released = [];
-        stats.mdc_TN_released = [];
-        stats.mdc_FP_released = [];
-        stats.mdc_FN_released = [];
-
-        stats.mdc_TP_not_released = [];
-        stats.mdc_TN_not_released = [];
-        stats.mdc_FP_not_released = [];
-        stats.mdc_FN_not_released = [];
-
-        stats.fld_TP_released = [];
-        stats.fld_TN_released = [];
-        stats.fld_FP_released = [];
-        stats.fld_FN_released = [];
-
-        stats.fld_TP_not_released = [];
-        stats.fld_TN_not_released = [];
-        stats.fld_FP_not_released = [];
-        stats.fld_FN_not_released = [];
+        stats.c2_sensitivity = [];
+        stats.c2_specificity = [];
         
-    elseif (strcmp(flag, 'add_fld') == 1)
-        
-        stats.fld_TP_released = [stats.fld_TP_released width(intersect(idx_c1, idx_c1_pred))];
-        stats.fld_TN_released = [stats.fld_TN_released width(intersect(idx_c2, idx_c2_pred))];
-        stats.fld_FP_released = [stats.fld_FP_released width(intersect(idx_c1, idx_c2_pred))];
-        stats.fld_FN_released = [stats.fld_FN_released  width(intersect(idx_c2, idx_c1_pred))];
-    
-        stats.fld_TP_not_released = [stats.fld_TP_not_released width(intersect(idx_c2, idx_c2_pred))];
-        stats.fld_TN_not_released = [stats.fld_TN_not_released width(intersect(idx_c1, idx_c1_pred))];
-        stats.fld_FP_not_released = [stats.fld_FP_not_released width(intersect(idx_c1, idx_c2_pred))];
-        stats.fld_FN_not_released = [stats.fld_FN_not_released  width(intersect(idx_c2, idx_c1_pred))];
-        
-    elseif strcmp(flag, 'add_mdc') == 1
-        
-        stats.mdc_TP_released = [stats.mdc_TP_released width(intersect(idx_c1, idx_c1_pred))];
-        stats.mdc_TN_released = [stats.mdc_TN_released width(intersect(idx_c2, idx_c2_pred))];
-        stats.mdc_FP_released = [stats.mdc_FP_released width(intersect(idx_c1, idx_c2_pred))];
-        stats.mdc_FN_released = [stats.mdc_FN_released  width(intersect(idx_c2, idx_c1_pred))];
+        if is_multi == 1
+            stats.c3_sensitivity = [];
+            stats.c3_specificity = [];
+            stats.TP_c3 = [];
+            stats.TN_c3 = [];
+            stats.FP_c3 = [];
+            stats.FN_c3 = [];
+        end
 
-        stats.mdc_TP_not_released = [stats.mdc_TP_not_released width(intersect(idx_c2, idx_c2_pred))];
-        stats.mdc_TN_not_released = [stats.mdc_TN_not_released width(intersect(idx_c1, idx_c1_pred))];
-        stats.mdc_FP_not_released = [stats.mdc_FP_not_released width(intersect(idx_c1, idx_c2_pred))];
-        stats.mdc_FN_not_released = [stats.mdc_FN_not_released  width(intersect(idx_c2, idx_c1_pred))];
+        stats.TP_c1 = [];
+        stats.TN_c1 = [];
+        stats.FP_c1 = [];
+        stats.FN_c1 = [];
+
+        stats.TP_c2 = [];
+        stats.TN_c2 = [];
+        stats.FP_c2 = [];
+        stats.FN_c2 = [];
         
-    elseif strcmp(flag, 'calc_fld') == 1
+    elseif (strcmp(flag, 'add') == 1)
+
+        if is_multi == 1
+            % CLASS 1
+            TP = width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred));
+            TN = width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c3_pred));
+            FP = width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c1, idx_class.idx_c3_pred));
+            FN = width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c1_pred));
+            
+            stats.TP_c1 = [stats.TP_c1 TP];
+            stats.TN_c1 = [stats.TN_c1 TN];
+            stats.FP_c1 = [stats.FP_c1 FP];
+            stats.FN_c1 = [stats.FN_c1 FN];
+
+            % CLASS 2
+            TP = width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred));
+            TN = width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c3_pred));
+            FP = width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c2_pred));
+            FN = width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c2, idx_class.idx_c3_pred));
+            
+            stats.TP_c2 = [stats.TP_c2 TP];
+            stats.TN_c2 = [stats.TN_c2 TN];
+            stats.FP_c2 = [stats.FP_c2 FP];
+            stats.FN_c2 = [stats.FN_c2 FN];
+            
+            % CLASS 3
+            TP = width(intersect(idx_class.idx_c3, idx_class.idx_c3_pred));
+            TN = width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred));
+            FP = width(intersect(idx_class.idx_c1, idx_class.idx_c3_pred)) + width(intersect(idx_class.idx_c2, idx_class.idx_c3_pred));
+            FN = width(intersect(idx_class.idx_c3, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c2_pred));
+            
+            stats.TP_c3 = [stats.TP_c3 TP];
+            stats.TN_c3 = [stats.TN_c3 TN];
+            stats.FP_c3 = [stats.FP_c3 FP];
+            stats.FN_c3 = [stats.FN_c3 FN];
+            
+        else
+            % CLASS 1
+            stats.TP_c1 = [stats.TP_c1 width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred))];
+            stats.TN_c1 = [stats.TN_c1 width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred))];
+            stats.FP_c1 = [stats.FP_c1 width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred))];
+            stats.FN_c1 = [stats.FN_c1  width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred))];
+
+            % CLASS 2
+            stats.TP_c2 = [stats.TP_c2 width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred))];
+            stats.TN_c2 = [stats.TN_c2 width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred))];
+            stats.FP_c2 = [stats.FP_c2 width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred))];
+            stats.FN_c2 = [stats.FN_c2  width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred))];
+        end
+        
+    elseif strcmp(flag, 'calc') == 1
         %% Perform the calculations
-        % RELEASED
+        % Class 1
         % Sensitivity, TP / (TP + FN)
-        stats.fld1_sensitivity = [stats.fld1_sensitivity (stats.fld_TP_released(r) / (stats.fld_TP_released(r) + stats.fld_FN_released(r)))];
+        stats.c1_sensitivity = [stats.c1_sensitivity (stats.TP_c1(r) / (stats.TP_c1(r) + stats.FN_c1(r)))];
         % Specificity, TN / (FP + TN)
-        stats.fld1_specificity = [stats.fld1_specificity (stats.fld_TN_released(r) / (stats.fld_FP_released(r) + stats.fld_TN_released(r)))];
+        stats.c1_specificity = [stats.c1_specificity (stats.TN_c1(r) / (stats.FP_c1(r) + stats.TN_c1(r)))];
 
-        % NOT RELEASED
+        % Class 2
         % Sensitivity, TP / (TP + FN)
-        stats.fld2_sensitivity = [stats.fld2_sensitivity (stats.fld_TP_not_released(r) / (stats.fld_TP_not_released(r) + stats.fld_FN_not_released(r)))];
+        stats.c2_sensitivity = [stats.c2_sensitivity (stats.TP_c2(r) / (stats.TP_c2(r) + stats.FN_c2(r)))];
         % Specificity, TN / (FP + TN)
-        stats.fld2_specificity = [stats.fld2_specificity (stats.fld_TN_not_released(r) / (stats.fld_FP_not_released(r) + stats.fld_TN_not_released(r)))];
+        stats.c2_specificity = [stats.c2_specificity (stats.TN_c2(r) / (stats.FP_c2(r) + stats.TN_c2(r)))];
+        
+        % Class 3
+        % Sensitivity, TP / (TP + FN)
+        stats.c3_sensitivity = [stats.c3_sensitivity (stats.TP_c3(r) / (stats.TP_c3(r) + stats.FN_c3(r)))];
+        % Specificity, TN / (FP + TN)
+        stats.c3_specificity = [stats.c3_specificity (stats.TN_c3(r) / (stats.FP_c3(r) + stats.TN_c3(r)))];
 
-    elseif strcmp(flag, 'calc_mdc') == 1
-        %% Perform the calculations
-        % RELEASED
-        % Sensitivity, TP / (TP + FN)
-        stats.mdc1_sensitivity = [stats.mdc1_sensitivity (stats.mdc_TP_released(r) / (stats.mdc_TP_released(r) + stats.mdc_FN_released(r)))];
-        % Specificity, TN / (FP + TN)
-        stats.mdc1_specificity = [stats.mdc1_specificity (stats.mdc_TN_released(r) / (stats.mdc_FP_released(r) + stats.mdc_TN_released(r)))];
-
-        % RELEASED
-        % Sensitivity, TP / (TP + FN)
-        stats.mdc2_sensitivity = [stats.mdc2_sensitivity (stats.mdc_TP_not_released(r) / (stats.mdc_TP_not_released(r) + stats.mdc_FN_not_released(r)))];
-        % Specificity, TN / (FP + TN)
-        stats.mdc2_specificity = [stats.mdc2_specificity (stats.mdc_TN_not_released(r) / (stats.mdc_FP_not_released(r) +  stats.mdc_TN_not_released(r)))];
-    
     elseif strcmp(flag, 'final_calc') == 1
         
-        stats.mdc_TP_released = mean(stats.mdc_TP_released);
-        stats.mdc_TN_released = mean(stats.mdc_TN_released);
-        stats.mdc_FP_released = mean(stats.mdc_FP_released);
-        stats.mdc_FN_released = mean(stats.mdc_FN_released);
+        stats.TP_c1 = mean(stats.TP_c1);
+        stats.TN_c1 = mean(stats.TN_c1);
+        stats.FP_c1 = mean(stats.FP_c1);
+        stats.FN_c1 = mean(stats.FN_c1);
+        
+        stats.c1_sensitivity = mean(stats.c1_sensitivity);
+        stats.c1_specificity = mean(stats.c1_specificity);
 
-        stats.mdc_TP_not_released = mean(stats.mdc_TP_not_released);
-        stats.mdc_TN_not_released = mean(stats.mdc_TN_not_released);
-        stats.mdc_FP_not_released = mean(stats.mdc_FP_not_released);
-        stats.mdc_FN_not_released = mean(stats.mdc_FN_not_released);
+        stats.TP_c2 = mean(stats.TP_c2);
+        stats.TN_c2 = mean(stats.TN_c2);
+        stats.FP_c2 = mean(stats.FP_c2);
+        stats.FN_c2 = mean(stats.FN_c2);
+        
+        stats.c2_sensitivity = mean(stats.c2_sensitivity);
+        stats.c2_specificity = mean(stats.c2_specificity);
+        
+        if is_multi == 1
+            
+            stats.TP_c3 = mean(stats.TP_c3);
+            stats.TN_c3 = mean(stats.TN_c3);
+            stats.FP_c3 = mean(stats.FP_c3);
+            stats.FN_c3 = mean(stats.FN_c3);
+            
+            stats.c3_sensitivity = mean(stats.c3_sensitivity);
+            stats.c3_specificity = mean(stats.c3_specificity);
+        end
 
-        stats.mdc1_sensitivity = mean(stats.mdc1_sensitivity);
-        stats.mdc1_specificity = mean(stats.mdc1_specificity);
-
-        stats.mdc2_sensitivity = mean(stats.mdc2_sensitivity);
-        stats.mdc2_specificity = mean(stats.mdc2_specificity);
-
-        stats.fld_TP_released = mean(stats.fld_TP_released);
-        stats.fld_TN_released = mean(stats.fld_TN_released);
-        stats.fld_FP_released = mean(stats.fld_FP_released);
-        stats.fld_FN_released = mean(stats.fld_FN_released);
-
-        stats.fld_TP_not_released = mean(stats.fld_TP_not_released);
-        stats.fld_TN_not_released = mean(stats.fld_TN_not_released);
-        stats.fld_FP_not_released = mean(stats.fld_FP_not_released);
-        stats.fld_FN_not_released = mean(stats.fld_FN_not_released);
-
-        stats.fld1_sensitivity = mean(stats.fld1_sensitivity);
-        stats.fld1_specificity = mean(stats.fld1_specificity);
-
-        stats.fld2_sensitivity = mean(stats.fld2_sensitivity);
-        stats.fld2_specificity = mean(stats.fld2_specificity);
-
-        stats.mean_error_fld = mean(stats.error_fld, 2);
-        stats.mean_error_mdc = mean(stats.error_mdc, 2);
+        stats.mean_error = mean(stats.error, 2);
+        
     end
 end

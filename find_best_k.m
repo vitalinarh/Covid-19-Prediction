@@ -1,6 +1,4 @@
-function [] = main_multi(scenario, classifier, n_runs, trn_ratio)
-
-close all;
+function k = main_multi(scenario, num_k, n_runs, trn_ratio)
 
 %% Read Data Structure
 
@@ -28,21 +26,16 @@ else
     return;
 end
 
-stats = stats_calc('init', 1);
+errors = zeros(n_runs, num_k);
 
-if strcmp(classifier, "knn") == 1
-    num_k = 20;
-    k = find_best_k(scenario, num_k, n_runs, trn_ratio);
-end
-
-for r = 1:1:n_runs
+for r=1:n_runs
+    
     % Division between the training and testing sets (released):
     trn_idx = [];
     tst_idx = [];
 
     for i = 1:data.dim
         idx_class = find(data.y == i);
-
         [trn_div, ~, tst_div] = dividerand(numel(idx_class), trn_ratio, 0, 1 - trn_ratio);
         trn_idx = [trn_idx, idx_class(trn_div)];
         tst_idx = [tst_idx, idx_class(tst_div)];
@@ -60,36 +53,24 @@ for r = 1:1:n_runs
     tst.num_data = size(tst.X,2);
     tst.name = 'Covid-19 Data (TESTING)';
     
-    idx_class.idx_c1 = find(trn.y == 1);
-    idx_class.idx_c2 = find(trn.y == 2);
-    idx_class.idx_c3 = find(trn.y == 3);
-    
-    if strcmp(classifier, 'bayes') == 1
-        
-    elseif strcmp(classifier, 'knn') == 1
+    for i=1:num_k    
         clear model
-        model = knnrule(trn, k);
+        K = i;
+        model = knnrule(trn, K);
         %figure; ppatterns(data); pboundary(model);
-        y_pred = knnclass(tst.X, model);
-        stats.error = [stats.error cerror(y_pred, tst.y)];
-        
-        if(strcmp(scenario, "C") == 1)
-            idx_class.idx_c1_pred = find(y_pred == 1);
-            idx_class.idx_c2_pred = find(y_pred == 2);
-            idx_class.idx_c3_pred = find(y_pred == 3);
-            stats = stats_calc('add', 1, stats, r, idx_class);
-            stats = stats_calc('calc', 1, stats, r);
-        else
-            idx_class.idx_c1_pred = find(y_pred == 1);
-            idx_class.idx_c2_pred = find(y_pred == 2);
-            stats = stats_calc('add', 0, stats, r, idx_class);
-            stats = stats_calc('calc', 0, stats, r);
-        end
-        
-    elseif strcmp(classifier, 'svm') == 1
-        
+        y = knnclass(tst.X, model);
+        errors(r, i) = (cerror(y, tst.y)) * 100;
+        %plot(errors(j, 1:i));
     end
     disp(sprintf('Run: %d', r));
 end
 
- stats = stats_calc('final_calc', 1, stats);
+mean_errors = mean(errors, 1);
+std_errors = std(errors, [], 1);
+errorbar(1:num_k, mean_errors, std_errors);
+hold on
+idx = find(mean_errors == min(mean_errors));
+
+plot(idx(1), min(mean_errors), 'ro');
+k = min(idx);
+fprintf('Best k --> %d \n', k);
