@@ -30,8 +30,6 @@ else
     return;
 end
 
-stats = stats_calc('init', 1);
-
 if strcmp(classifier, "knn") == 1
     % num_k = 20;
     % k = find_best_k(scenario, num_k, n_runs, trn_ratio);
@@ -41,6 +39,12 @@ elseif strcmp(classifier, 'svm') == 1
     g = 2^(opt_args{2});
     
     kernel_type = opt_args{3};
+end
+
+if(strcmp(scenario, "C") == 1)
+     stats = stats_calc('init', 1);
+else
+     stats = stats_calc('init', 0);
 end
 
 for r = 1:1:n_runs
@@ -80,7 +84,8 @@ for r = 1:1:n_runs
         bayes_model = bayesdf(gauss_model);
         
         % Obtain Bayes model predictions:
-        y_pred = quadclass(tst.X, bayes_model);
+        % y_pred = quadclass(tst.X, bayes_model);
+        y_pred = predict(tst.X, bayes_model);
         
         % Visualize:
         % figure; ppatterns(trn);

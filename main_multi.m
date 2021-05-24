@@ -30,8 +30,6 @@ else
     return;
 end
 
-stats = stats_calc('init', 1);
-
 if strcmp(classifier, "knn") == 1
     % num_k = 20;
     % k = find_best_k(scenario, num_k, n_runs, trn_ratio);
@@ -41,6 +39,12 @@ elseif strcmp(classifier, 'svm') == 1
     g = 2^(opt_args{2});
     
     kernel_type = opt_args{3};
+end
+
+if(strcmp(scenario, "C") == 1)
+     stats = stats_calc('init', 1);
+else
+     stats = stats_calc('init', 0);
 end
 
 for r = 1:1:n_runs
@@ -103,17 +107,23 @@ for r = 1:1:n_runs
         clear svm_model;
         
         % Build SVM model:
-        if(strcmp(scenario, "C") == 1)
-            temp_svm = templateSVM('KernelFunction',kernel_type, ...
-                                'BoxConstraint', c, 'KernelScale', sqrt(1/(2*g)), ...
-                                'Solver', 'SMO');
+        temp_svm = templateSVM('KernelFunction',kernel_type, ...
+                               'BoxConstraint', c, 'KernelScale', sqrt(1/(2*g)), ...
+                               'Solver', 'SMO');
 
-            svm_model = fitcecoc(trn.X', trn.y', 'Coding', 'onevsall', 'Learners', temp_svm);
-        else
-            svm_model = fitcsvm(trn.X', trn.y', 'KernelFunction', kernel_type, ...
-                            'BoxConstraint', c, 'KernelScale', sqrt(1/(2*g)), ...
-                            'Solver', 'SMO');
-        end
+        svm_model = fitcecoc(trn.X', trn.y', 'Coding', 'onevsall', 'Learners', temp_svm);
+        
+        % if(strcmp(scenario, "C") == 1)
+        %     temp_svm = templateSVM('KernelFunction',kernel_type, ...
+        %                            'BoxConstraint', c, 'KernelScale', sqrt(1/(2*g)), ...
+        %                            'Solver', 'SMO');
+        % 
+        %     svm_model = fitcecoc(trn.X', trn.y', 'Coding', 'onevsall', 'Learners', temp_svm);
+        % else
+        %     svm_model = fitcsvm(trn.X', trn.y', 'KernelFunction', kernel_type, ...
+        %                         'BoxConstraint', c, 'KernelScale', sqrt(1/(2*g)), ...
+        %                         'Solver', 'SMO');
+        % end
         
         % Obtain SVM model predictions:
         y_pred = predict(svm_model, tst.X');
