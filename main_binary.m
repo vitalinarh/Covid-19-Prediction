@@ -73,14 +73,6 @@ for r = 1:1:n_runs
         % figure; axis equal; ppatterns(trn);
         % pline(fld_model);
         
-        stats.error = [stats.error cerror(y_pred, tst.y)];
-        
-        idx_class.idx_c1_pred = find(y_pred == 1);
-        idx_class.idx_c2_pred = find(y_pred == 2);
-
-        stats = stats_calc('add', 0, stats, r, idx_class);
-        stats = stats_calc('calc', 0, stats, r);
-        
     elseif (strcmp(classifier, "mdc") == 1)
         %% Euclidean Linear Discriminant
         mu1 = mean(trn.X(:, idx_class.idx_c1), 2);
@@ -102,16 +94,18 @@ for r = 1:1:n_runs
 
             y_pred(i) = (g1 < g2) + 1;
         end
-
-        stats.error = [stats.error cerror(y_pred, tst.y)];
-
-        idx_class.idx_c1_pred = find(y_pred == 1);
-        idx_class.idx_c2_pred = find(y_pred == 2);
-
-        stats = stats_calc('add', 0, stats, r, idx_class);
-        stats = stats_calc('calc', 0, stats, r);
-        
     end
+        
+    stats.error = [stats.error cerror(y_pred, tst.y)];
+
+    idx_class.idx_c1_pred = find(y_pred == 1);
+    idx_class.idx_c2_pred = find(y_pred == 2);
+
+    stats = stats_calc('add', 0, stats, r, idx_class);
+    stats = stats_calc('calc', 0, stats, r);
+    
+    fprintf('Run: %d\n', r);
 end
 
 stats = stats_calc('final_calc', 0, stats);
+

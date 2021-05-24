@@ -6,36 +6,28 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
 
         stats.c1_sensitivity = [];
         stats.c1_specificity = [];
-        stats.c1_accuracy = [];
-        
-        stats.TP_c1 = [];
-        stats.TN_c1 = [];
-        stats.FP_c1 = [];
-        stats.FN_c1 = [];
 
         stats.c2_sensitivity = [];
         stats.c2_specificity = [];
-        stats.c2_accuracy = [];
-        
-        stats.TP_c2 = [];
-        stats.TN_c2 = [];
-        stats.FP_c2 = [];
-        stats.FN_c2 = [];
         
         if is_multi == 1
             stats.c3_sensitivity = [];
             stats.c3_specificity = [];
-            stats.c3_accuracy = [];
-            
             stats.TP_c3 = [];
             stats.TN_c3 = [];
             stats.FP_c3 = [];
             stats.FN_c3 = [];
         end
-        
-        stats.mean_sensitivity = 0;
-        stats.mean_specificity = 0;
-        stats.mean_accuracy = 0;
+
+        stats.TP_c1 = [];
+        stats.TN_c1 = [];
+        stats.FP_c1 = [];
+        stats.FN_c1 = [];
+
+        stats.TP_c2 = [];
+        stats.TN_c2 = [];
+        stats.FP_c2 = [];
+        stats.FN_c2 = [];
         
     elseif (strcmp(flag, 'add') == 1)
 
@@ -95,15 +87,13 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
         % Specificity, TN / (FP + TN)
         stats.c1_specificity = [stats.c1_specificity (stats.TN_c1(r) / (stats.FP_c1(r) + stats.TN_c1(r)))];
         % Accuracy, TP + TN / (TP + TN + FP + FN)
-        stats.c1_accuracy = [stats.c1_accuracy ((stats.TP_c1(r) + stats.TN_c1(r)) / (stats.TP_c1(r) + stats.TN_c1(r) + stats.FP_c1(r) + stats.FN_c1(r)))];
+        stats.c1_accuracy = [stats.c1_accuracy (stats.TP_c1(r) + stats.TN_c1(r) / (stats.TP_c1(r) + stats.TN_c1(r)stats.FP_c1(r) + stats.TN_c1(r)))];
 
         % Class 2
         % Sensitivity, TP / (TP + FN)
         stats.c2_sensitivity = [stats.c2_sensitivity (stats.TP_c2(r) / (stats.TP_c2(r) + stats.FN_c2(r)))];
         % Specificity, TN / (FP + TN)
         stats.c2_specificity = [stats.c2_specificity (stats.TN_c2(r) / (stats.FP_c2(r) + stats.TN_c2(r)))];
-        % Accuracy, TP + TN / (TP + TN + FP + FN)
-        stats.c2_accuracy = [stats.c2_accuracy ((stats.TP_c2(r) + stats.TN_c2(r)) / (stats.TP_c2(r) + stats.TN_c2(r) + stats.FP_c2(r) + stats.FN_c2(r)))];
         
         if is_multi == 1
             % Class 3
@@ -111,8 +101,6 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
             stats.c3_sensitivity = [stats.c3_sensitivity (stats.TP_c3(r) / (stats.TP_c3(r) + stats.FN_c3(r)))];
             % Specificity, TN / (FP + TN)
             stats.c3_specificity = [stats.c3_specificity (stats.TN_c3(r) / (stats.FP_c3(r) + stats.TN_c3(r)))];
-            % Accuracy, TP + TN / (TP + TN + FP + FN)
-            stats.c3_accuracy = [stats.c3_accuracy ((stats.TP_c3(r) + stats.TN_c3(r)) / (stats.TP_c3(r) + stats.TN_c3(r) + stats.FP_c3(r) + stats.FN_c3(r)))];
         end
             
     elseif strcmp(flag, 'final_calc') == 1
@@ -133,9 +121,8 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
         stats.c2_sensitivity = mean(stats.c2_sensitivity);
         stats.c2_specificity = mean(stats.c2_specificity);
         
-        stats.mean_sensitivity = mean([stats.c1_sensitivity, stats.c2_sensitivity]);
-        stats.mean_specificity = mean([stats.c1_specificity, stats.c2_specificity]);
-        stats.mean_accuracy = mean([stats.c1_accuracy, stats.c2_accuracy]);
+        stats.mean_sensitivity = mean(stats.c1_sensitivity, stats.c2_sensitivity);
+        stats.mean_specificity = mean(stats.c1_specificity, stats.c2_specificity);
         
         if is_multi == 1
             stats.TP_c3 = mean(stats.TP_c3);
@@ -146,9 +133,8 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
             stats.c3_sensitivity = mean(stats.c3_sensitivity);
             stats.c3_specificity = mean(stats.c3_specificity);
             
-            stats.mean_sensitivity = mean([stats.c1_sensitivity, stats.c2_sensitivity, stats.c3_sensitivity]);
-            stats.mean_specificity = mean([stats.c1_specificity, stats.c2_specificity, stats.c3_specificity]);
-            stats.mean_accuracy = mean([stats.c1_accuracy, stats.c2_accuracy, stats.c3_accuracy]);
+            stats.mean_sensitivity = mean(stats.c1_sensitivity, stats.c2_sensitivity, stats.c3_sensitivity);
+            stats.mean_specificity = mean(stats.c1_specificity, stats.c2_specificity, stats.c3_specificity);
         end
 
         stats.mean_error = mean(stats.error, 2);

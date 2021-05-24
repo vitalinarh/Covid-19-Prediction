@@ -117,7 +117,10 @@ if strcmp(pca_rule, "kaiser") == 1
     % Kaiser method:
     n_dim = numel(find(eigenval < 1));
 elseif strcmp (pca_rule, "scree") == 1
-    % Kaiser method:
+    % Scree method (?):
+    n_dim = numel(find(eigenval < 1));
+else
+    % Default is Kaiser method:
     n_dim = numel(find(eigenval < 1));
 end
 
