@@ -93,12 +93,14 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
         % Specificity, TN / (FP + TN)
         stats.c2_specificity = [stats.c2_specificity (stats.TN_c2(r) / (stats.FP_c2(r) + stats.TN_c2(r)))];
         
-        % Class 3
-        % Sensitivity, TP / (TP + FN)
-        stats.c3_sensitivity = [stats.c3_sensitivity (stats.TP_c3(r) / (stats.TP_c3(r) + stats.FN_c3(r)))];
-        % Specificity, TN / (FP + TN)
-        stats.c3_specificity = [stats.c3_specificity (stats.TN_c3(r) / (stats.FP_c3(r) + stats.TN_c3(r)))];
-
+        if is_multi == 1
+            % Class 3
+            % Sensitivity, TP / (TP + FN)
+            stats.c3_sensitivity = [stats.c3_sensitivity (stats.TP_c3(r) / (stats.TP_c3(r) + stats.FN_c3(r)))];
+            % Specificity, TN / (FP + TN)
+            stats.c3_specificity = [stats.c3_specificity (stats.TN_c3(r) / (stats.FP_c3(r) + stats.TN_c3(r)))];
+        end
+            
     elseif strcmp(flag, 'final_calc') == 1
         
         stats.TP_c1 = mean(stats.TP_c1);
@@ -118,7 +120,6 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
         stats.c2_specificity = mean(stats.c2_specificity);
         
         if is_multi == 1
-            
             stats.TP_c3 = mean(stats.TP_c3);
             stats.TN_c3 = mean(stats.TN_c3);
             stats.FP_c3 = mean(stats.FP_c3);
@@ -129,6 +130,5 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
         end
 
         stats.mean_error = mean(stats.error, 2);
-        
     end
 end

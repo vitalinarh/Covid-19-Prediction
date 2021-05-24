@@ -1,4 +1,4 @@
-function [] = analyse_data(scenario, pca_rule, corr_threshold, kw_threshold)
+function [] = analyse_data(scenario, pca_rule, corr_check, corr_threshold,  kw_check, kw_threshold)
 %% Read Data
 
 % Load mat file:
@@ -32,6 +32,9 @@ elseif (strcmp(scenario, "C") == 1)
            'Elementary Count', 'Kindergarten Count', 'University Count',...
            'Academy Ratio', 'Elderly Population', 'Elderly Alone Ration',...
            'Nursing Home Count'};
+else
+    disp('No dataset selected!');
+    return;
 end
 
 %% Data Structure
@@ -61,10 +64,12 @@ correlation_matrix = corrcoef(data.X');
 % Redundant Features
 redundant_feat = [];
 
-for i = 1:data.dim
-    if ismember(i, redundant_feat) == 0
-        idx_correlated = find(correlation_matrix(i, :) > corr_threshold);
-        redundant_feat = union(redundant_feat, setdiff(idx_correlated, i));
+if corr_check == 1
+    for i = 1:data.dim
+        if ismember(i, redundant_feat) == 0
+            idx_correlated = find(correlation_matrix(i, :) > corr_threshold);
+            redundant_feat = union(redundant_feat, setdiff(idx_correlated, i));
+        end
     end
 end
 
@@ -81,10 +86,14 @@ end
 
 idx = find(cell2mat(rank(:, 2)) > kw_threshold);
 
-%% New Data Strucutre
-
 % Selection of features based on previous steps:
-feat_selected = setdiff(idx, redundant_feat);
+feat_selected = [1:data.dim];
+
+if kw_check == 1
+    feat_selected = setdiff(idx, redundant_feat);
+end
+
+%% New Data Strucutre
 
 data_new.X = data_scaled.X(feat_selected,:);
 data_new.y = data_scaled.y;
@@ -137,10 +146,10 @@ data_lda.num_data = size(data_lda.X,2);
 data_lda.name = 'Covid-19 Data (Reduced with LDA)';
 
 if (strcmp(scenario, "A") == 1)
-    save('data\DataReduced_A.mat', 'data_pca', 'data_lda');
+    save('data\DataReduced_A.mat', 'data_new', 'data_pca', 'data_lda');
 elseif (strcmp(scenario, "B") == 1)
-    save('data\DataReduced_B.mat', 'data_pca', 'data_lda');
+    save('data\DataReduced_B.mat', 'data_new', 'data_pca', 'data_lda');
 elseif (strcmp(scenario, "C") == 1)
-    save('data\DataReduced_C.mat', 'data_pca', 'data_lda');
+    save('data\DataReduced_C.mat', 'data_new', 'data_pca', 'data_lda');
 end
 
