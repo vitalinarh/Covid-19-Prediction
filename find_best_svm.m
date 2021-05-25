@@ -1,4 +1,4 @@
-function [] = find_best_svm(scenario, feat_reduction, c_pot, g_pot, kernel_type, n_runs, trn_ratio)
+function [c_pot_res, g_pot_res] = find_best_svm(scenario, feat_reduction, c_pot, g_pot, kernel_type, n_runs, trn_ratio)
 
 %% Read Data Structure
 
@@ -110,6 +110,9 @@ for b=1:numel(ix)
     fprintf('Average best combination (%d): C = 2^%d, G = 2^%d\n', ...
             b, c_pot(ix(b)), g_pot(ix(b)));
 end
+
+c_pot_res = c_pot(ix(1));
+g_pot_res = g_pot(ix(1));
 
 % ROC Curves:
 % for p = 1:numel(ix)
