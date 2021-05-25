@@ -84,12 +84,11 @@ for i=1:data.dim
     rank{i, 2} = anovatab{2, 5};
 end
 
-idx = find(cell2mat(rank(:, 2)) > kw_threshold);
-
 % Selection of features based on previous steps:
 feat_selected = [1:data.dim];
 
 if kw_check == 1
+    idx = find(cell2mat(rank(:, 2)) > kw_threshold);
     feat_selected = setdiff(idx, redundant_feat);
 end
 
@@ -115,9 +114,6 @@ eigenval = eig(correlation_matrix_new);
 
 if strcmp(pca_rule, "kaiser") == 1
     % Kaiser method:
-    n_dim = numel(find(eigenval < 1));
-elseif strcmp (pca_rule, "scree") == 1
-    % Scree method (?):
     n_dim = numel(find(eigenval < 1));
 else
     % Default is Kaiser method:
