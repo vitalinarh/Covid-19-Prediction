@@ -43,8 +43,8 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
             % CLASS 1
             TP = width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred));
             TN = width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c3_pred));
-            FP = width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c1_pred));
-            FN = width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c1, idx_class.idx_c3_pred));
+            FP = width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred)) + width(intersect(idx_class.idx_c1, idx_class.idx_c3_pred));
+            FN = width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred)) + width(intersect(idx_class.idx_c3, idx_class.idx_c1_pred));
             
             stats.TP_c1 = [stats.TP_c1 TP];
             stats.TN_c1 = [stats.TN_c1 TN];
@@ -77,8 +77,8 @@ function stats = stats_calc(flag, is_multi, stats, r, idx_class)
             % CLASS 1
             stats.TP_c1 = [stats.TP_c1 width(intersect(idx_class.idx_c1, idx_class.idx_c1_pred))];
             stats.TN_c1 = [stats.TN_c1 width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred))];
-            stats.FP_c1 = [stats.FP_c1 width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred))];
-            stats.FN_c1 = [stats.FN_c1 width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred))];
+            stats.FP_c1 = [stats.FP_c1 width(intersect(idx_class.idx_c1, idx_class.idx_c2_pred))];
+            stats.FN_c1 = [stats.FN_c1 width(intersect(idx_class.idx_c2, idx_class.idx_c1_pred))];
 
             % CLASS 2
             stats.TP_c2 = [stats.TP_c2 width(intersect(idx_class.idx_c2, idx_class.idx_c2_pred))];

@@ -30,7 +30,7 @@ else
     return;
 end
 
-if strcmp(classifier, "knn") == 1
+if strcmp(classifier, 'knn') == 1
     % num_k = 20;
     % k = find_best_k(scenario, num_k, n_runs, trn_ratio);
     k = opt_args{1};
@@ -41,7 +41,7 @@ elseif strcmp(classifier, 'svm') == 1
     kernel_type = opt_args{3};
 end
 
-if(strcmp(scenario, "C") == 1)
+if(strcmp(scenario, 'C') == 1)
      stats = stats_calc('init', 1);
 else
      stats = stats_calc('init', 0);
@@ -127,12 +127,13 @@ for r = 1:1:n_runs
         
         % Obtain SVM model predictions:
         y_pred = predict(svm_model, tst.X');
+        y_pred = y_pred';
     end
     
     % Statistics:
     stats.error = [stats.error cerror(y_pred, tst.y)];
     
-    if(strcmp(scenario, "C") == 1)
+    if(strcmp(scenario, 'C') == 1)
         idx_class.idx_c1_pred = find(y_pred == 1);
         idx_class.idx_c2_pred = find(y_pred == 2);
         idx_class.idx_c3_pred = find(y_pred == 3);
@@ -150,7 +151,7 @@ for r = 1:1:n_runs
     fprintf('Run: %d\n', r);
 end
 
-if(strcmp(scenario, "C") == 1)
+if(strcmp(scenario, 'C') == 1)
      stats = stats_calc('final_calc', 1, stats);
 else
      stats = stats_calc('final_calc', 0, stats);
